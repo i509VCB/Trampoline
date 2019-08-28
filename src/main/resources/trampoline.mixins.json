@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "me.i509.fabric.trampoline.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "server": [
+    "MixinClientConnection",
+    "MixinHandshakeC2SPacket",
+    "MixinServerHandshakeNetworkHandler",
+    "MixinServerLoginNetworkHandler",
+    "MixinServerPlayerEntity"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
