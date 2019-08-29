@@ -9,7 +9,8 @@
     "MixinHandshakeC2SPacket",
     "MixinServerHandshakeNetworkHandler",
     "MixinServerLoginNetworkHandler",
-    "MixinServerPlayerEntity"
+    "MixinServerPlayerEntity",
+    "MixinServerConfigHandler"
   ],
   "injectors": {
     "defaultRequire": 1

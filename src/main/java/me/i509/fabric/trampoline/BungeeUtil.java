@@ -14,8 +14,6 @@ public class BungeeUtil {
     private static Gson gson = new Gson();
 
     public static void handshake(HandshakeC2SPacket handshakeC2SPacket_1, ClientConnection client) {
-        if (TrampolineServerMod.USE_BUNGEE) {
-            
             BungeeConnectionModifier bClient = (BungeeConnectionModifier) client;
 
             HandshakeC2SPacketModifier modPacket = (HandshakeC2SPacketModifier) handshakeC2SPacket_1;
@@ -36,6 +34,5 @@ public class BungeeUtil {
             if (split.length == 4) {
                 bClient.setSpoofedProfile(gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class));
             }
-        }
     }
 }

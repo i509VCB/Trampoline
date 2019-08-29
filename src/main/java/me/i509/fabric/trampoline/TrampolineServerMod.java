@@ -19,12 +19,16 @@ import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.minecraft.command.arguments.EntityArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
 
 public class TrampolineServerMod implements DedicatedServerModInitializer {
-    
-    public static boolean USE_BUNGEE = true;
     
     public static BungeeAdaptedPlayer adapt(ServerPlayerEntity entity) {
         return (BungeeAdaptedPlayer) entity;
@@ -52,8 +56,14 @@ public class TrampolineServerMod implements DedicatedServerModInitializer {
                 .redirect(bungeeBase));
     }
 
-    private int aboutThis(ServerCommandSource source) {
+    private int aboutThis(ServerCommandSource source) throws CommandSyntaxException {
+        source.sendFeedback(Texts.bracketed(new LiteralText("========Trampoline========").formatted(Formatting.GOLD)), false);
+        source.sendFeedback(new LiteralText("Allows IP-Forwarding on Fabric servers connected to Bungeecord").formatted(Formatting.GRAY), false);
+        source.sendFeedback(new LiteralText("By i509VCB").formatted(Formatting.GRAY), false);
         
+        Text t = new LiteralText("https://github.com/i509VCB/Trampoline").setStyle((new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/i509VCB/Trampoline")))).formatted(Formatting.YELLOW);
+        
+        source.sendFeedback(new LiteralText("Github Link: ").formatted(Formatting.GREEN).append(t), false);
         return 1;
     }
 

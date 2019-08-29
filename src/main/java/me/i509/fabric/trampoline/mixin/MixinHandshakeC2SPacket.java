@@ -42,7 +42,7 @@ public class MixinHandshakeC2SPacket implements HandshakeC2SPacketModifier {
     }
     
     /**
-     * @reason Why? I am lazy. Also to shut up Loom complaing about docs
+     * @reason Why? I am lazy. Also to shut up Loom complaining about docs
      * @author i509VCB
      */
     @Overwrite
