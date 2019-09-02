@@ -9,8 +9,8 @@
     "i509VCB"
   ],
   "contact": {
-    "homepage": "",
-    "sources": ""
+    "homepage": "https://github.com/i509VCB/Trampoline",
+    "sources": "https://github.com/i509VCB/Trampoline"
   },
 
   "license": "MIT",
@@ -34,6 +34,6 @@
     "flamingo": "*"
   },
   "custom": {
-    "fabric-networking.shouldHandshake": false
+    "fabric-networking:shouldHandshake": false
   }
 }
