@@ -40,7 +40,8 @@ public class TrampolineServerMod implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         LOGGER.info(PREFIX + "Enabling Trampoline");
-        
+        LOGGER.warn(PREFIX + "The server is in offline mode to allow connection to Bungeecord. Please secure your server using the tutorial below, otherwise anyone can join the server:");
+        LOGGER.warn(PREFIX + "https://www.spigotmc.org/wiki/firewall-guide/");
         CommandRegistry.INSTANCE.register(true, dispatcher -> registerCommands(dispatcher));
     }
 

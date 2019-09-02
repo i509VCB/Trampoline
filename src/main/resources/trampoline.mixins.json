@@ -10,7 +10,8 @@
     "MixinServerHandshakeNetworkHandler",
     "MixinServerLoginNetworkHandler",
     "MixinServerPlayerEntity",
-    "MixinServerConfigHandler"
+    "MixinServerConfigHandler",
+    "MixinMinecraftServer"
   ],
   "injectors": {
     "defaultRequire": 1
