@@ -46,10 +46,10 @@ public class MixinHandshakeC2SPacket implements HandshakeC2SPacketModifier {
      * @author i509VCB
      */
     @Overwrite
-    public void read(PacketByteBuf packetByteBuf_1) throws IOException {
-        this.version = packetByteBuf_1.readVarInt();
-        this.address = packetByteBuf_1.readString(Short.MAX_VALUE);         
-        this.port = packetByteBuf_1.readUnsignedShort();
-        this.state = NetworkState.byId(packetByteBuf_1.readVarInt());
+    public void read(PacketByteBuf byteBuf) throws IOException {
+        this.version = byteBuf.readVarInt();
+        this.address = byteBuf.readString(Short.MAX_VALUE);
+        this.port = byteBuf.readUnsignedShort();
+        this.state = NetworkState.byId(byteBuf.readVarInt());
     }
 }

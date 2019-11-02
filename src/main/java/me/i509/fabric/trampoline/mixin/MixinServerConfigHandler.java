@@ -18,8 +18,8 @@ import net.minecraft.server.ServerConfigHandler;
 public class MixinServerConfigHandler {
     // While IP-Forwarding is enabled, make the game lookup profiles from Mojang rather than calculating an offline UUID
     @Inject(at = @At(value = "INVOKE", target = "net/minecraft/server/MinecraftServer.isOnlineMode()Z"), method = "lookupProfile(Lnet/minecraft/server/MinecraftServer;Ljava/util/Collection;Lcom/mojang/authlib/ProfileLookupCallback;)V", locals = LocalCapture.CAPTURE_FAILEXCEPTION, cancellable = true)
-    private static void checkOnline(MinecraftServer minecraftServer_1, Collection collection_1, ProfileLookupCallback profileLookupCallback_1, CallbackInfo ci, String[] strings_1) {
-        minecraftServer_1.getGameProfileRepo().findProfilesByNames(strings_1, Agent.MINECRAFT, profileLookupCallback_1);
+    private static void checkOnline(MinecraftServer minecraftServer, Collection collection, ProfileLookupCallback lookupCallback, CallbackInfo ci, String[] names) {
+        minecraftServer.getGameProfileRepo().findProfilesByNames(names, Agent.MINECRAFT, lookupCallback);
         ci.cancel();
     }
 }

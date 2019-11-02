@@ -36,7 +36,6 @@ public class MixinServerLoginNetworkHandler {
     @Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerLoginNetworkHandler$State;READY_TO_ACCEPT:Lnet/minecraft/server/network/ServerLoginNetworkHandler$State;", opcode = Opcodes.GETSTATIC), method = "onHello(Lnet/minecraft/server/network/packet/LoginHelloC2SPacket;)V", cancellable = true)
     public void onHello(CallbackInfo ci) {
         UUID uuid;
-        
         BungeeConnectionModifier bungeeConnection = (BungeeConnectionModifier) client;
         
         if (bungeeConnection.getSpoofedUUID() != null) {

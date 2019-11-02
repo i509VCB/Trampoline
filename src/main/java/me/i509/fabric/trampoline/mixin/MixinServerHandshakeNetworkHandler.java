@@ -18,7 +18,7 @@ public class MixinServerHandshakeNetworkHandler {
     private ClientConnection client;
     
     @Inject(at = @At(value = "INVOKE", target = "net/minecraft/network/ClientConnection.setPacketListener(Lnet/minecraft/network/listener/PacketListener;)V", ordinal = 0, shift = Shift.AFTER), method = "onHandshake(Lnet/minecraft/server/network/packet/HandshakeC2SPacket;)V")
-    public void onHandshake(HandshakeC2SPacket handshakeC2SPacket_1, CallbackInfo ci) { // First to go.
-        MixinHelpers.handshake(handshakeC2SPacket_1, client);
+    public void onHandshake(HandshakeC2SPacket handshakePacket, CallbackInfo ci) { // First to go.
+        MixinHelpers.handshake(handshakePacket, client);
     }
 }

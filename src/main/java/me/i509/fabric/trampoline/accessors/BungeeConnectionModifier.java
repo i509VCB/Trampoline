@@ -6,7 +6,6 @@ import java.util.UUID;
 import com.mojang.authlib.properties.Property;
 
 public interface BungeeConnectionModifier {
-
     void setSocketAddress(InetSocketAddress inetSocketAddress);
     
     void setSpoofedUUID(UUID uuid);

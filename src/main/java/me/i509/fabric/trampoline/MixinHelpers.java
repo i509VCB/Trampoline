@@ -11,12 +11,14 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 public class MixinHelpers {
+    private MixinHelpers() {}
+
     private static Gson gson = new Gson();
 
-    public static void handshake(HandshakeC2SPacket handshakeC2SPacket_1, ClientConnection client) {
+    public static void handshake(HandshakeC2SPacket handshakePacket, ClientConnection client) {
             BungeeConnectionModifier bungeeClientConnection = (BungeeConnectionModifier) client;
 
-            HandshakeC2SPacketModifier modPacket = (HandshakeC2SPacketModifier) handshakeC2SPacket_1;
+            HandshakeC2SPacketModifier modPacket = (HandshakeC2SPacketModifier) handshakePacket;
             
             String[] split = modPacket.getAddress().split("\00");
             
