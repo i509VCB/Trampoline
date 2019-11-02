@@ -10,11 +10,11 @@ import net.minecraft.server.network.packet.HandshakeC2SPacket;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
-public class BungeeUtil {
+public class MixinHelpers {
     private static Gson gson = new Gson();
 
     public static void handshake(HandshakeC2SPacket handshakeC2SPacket_1, ClientConnection client) {
-            BungeeConnectionModifier bClient = (BungeeConnectionModifier) client;
+            BungeeConnectionModifier bungeeClientConnection = (BungeeConnectionModifier) client;
 
             HandshakeC2SPacketModifier modPacket = (HandshakeC2SPacketModifier) handshakeC2SPacket_1;
             
@@ -22,8 +22,8 @@ public class BungeeUtil {
             
             if (split.length == 3 || split.length == 4) {
                 modPacket.setAddress(split[0]);
-                bClient.setSocketAddress(new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) client.getAddress()).getPort()));
-                bClient.setSpoofedUUID(com.mojang.util.UUIDTypeAdapter.fromString(split[2]));
+                bungeeClientConnection.setSocketAddress(new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) client.getAddress()).getPort()));
+                bungeeClientConnection.setSpoofedUUID(com.mojang.util.UUIDTypeAdapter.fromString(split[2]));
             } else {
                 Text text = new LiteralText("If you wish to use IP forwarding, please enable it in your BungeeCord config as well!");
                 client.send(new LoginDisconnectS2CPacket(text));
@@ -32,7 +32,7 @@ public class BungeeUtil {
             }
             
             if (split.length == 4) {
-                bClient.setSpoofedProfile(gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class));
+                bungeeClientConnection.setSpoofedProfile(gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class));
             }
     }
 }

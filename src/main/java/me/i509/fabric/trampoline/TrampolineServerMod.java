@@ -1,63 +1,87 @@
 package me.i509.fabric.trampoline;
 
-import static net.minecraft.command.arguments.EntityArgumentType.getPlayer;
-import static net.minecraft.command.arguments.EntityArgumentType.player;
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-
-import me.i509.fabric.trampoline.accessors.BungeeAdaptedPlayer;
+import com.mojang.brigadier.tree.RootCommandNode;
+import me.i509.fabric.trampoline.accessors.BungeeProxiedPlayer;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.registry.CommandRegistry;
-import net.minecraft.command.arguments.EntityArgumentType;
+import net.minecraft.command.EntitySelector;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.HoverEvent.Action;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 import net.minecraft.util.Formatting;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import static net.minecraft.command.arguments.EntityArgumentType.getPlayer;
+import static net.minecraft.command.arguments.EntityArgumentType.player;
 
 public class TrampolineServerMod implements DedicatedServerModInitializer {
-    
-    public static BungeeAdaptedPlayer adapt(ServerPlayerEntity entity) {
-        return (BungeeAdaptedPlayer) entity;
-    }
-    
     public static final Logger LOGGER = LogManager.getLogger("Fabric-Trampoline");
     public static final String PREFIX = "[Trampoline-Fabric] ";
+
+    public static BungeeProxiedPlayer adapt(ServerPlayerEntity entity) {
+        return (BungeeProxiedPlayer) entity;
+    }
 
     @Override
     public void onInitializeServer() {
         LOGGER.info(PREFIX + "Enabling Trampoline");
         LOGGER.warn(PREFIX + "The server is in offline mode to allow connection to Bungeecord. Please secure your server using the tutorial below, otherwise anyone can join the server:");
         LOGGER.warn(PREFIX + "https://www.spigotmc.org/wiki/firewall-guide/");
-        CommandRegistry.INSTANCE.register(true, dispatcher -> registerCommands(dispatcher));
+        CommandRegistry.INSTANCE.register(true, this::registerCommands);
     }
 
     private void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher) {
-        LiteralCommandNode<ServerCommandSource> bungeeBase = dispatcher.register(literal("bungee-trampoline")
-                .then(literal("info").requires(csource -> csource.hasPermissionLevel(4))
-                        .then(argument("player", player())
-                                .executes(ctx -> getInfo(ctx.getSource(), getPlayer(ctx, "player").getGameProfile())))
-                        .executes(ctx -> getInfo(ctx.getSource(), ctx.getSource().getPlayer().getGameProfile())))
-                .executes(ctx -> aboutThis(ctx.getSource())));
-        
-        dispatcher.register(literal("trampoline")
-                .redirect(bungeeBase));
+        RootCommandNode<ServerCommandSource> root = dispatcher.getRoot();
+
+        LiteralCommandNode<ServerCommandSource> bungee = CommandManager.literal("bungee-trampoline").executes(this::aboutThis).build();
+        LiteralCommandNode<ServerCommandSource> redirect = CommandManager.literal("trampoline").redirect(bungee).build();
+
+        LiteralCommandNode<ServerCommandSource> info = CommandManager.literal("info").requires(s -> s.hasPermissionLevel(4)).executes(this::getInfoSelf).build();
+
+        ArgumentCommandNode<ServerCommandSource, EntitySelector> otherTarget = CommandManager.argument("player", player()).executes(this::getInfoTargetted).build();
+
+        info.addChild(otherTarget);
+        bungee.addChild(info);
+        root.addChild(bungee);
+        root.addChild(redirect);
     }
 
-    private int aboutThis(ServerCommandSource source) throws CommandSyntaxException {
+    private int getInfoSelf(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        return getInfo(source, source.getPlayer());
+    }
+
+    private int getInfoTargetted(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        ServerCommandSource source = context.getSource();
+        ServerPlayerEntity target = getPlayer(context, "player");
+
+        return getInfo(source, target);
+    }
+
+    private int getInfo(ServerCommandSource source, ServerPlayerEntity target) throws CommandSyntaxException {
+        BungeeProxiedPlayer proxied = adapt(target);
+        source.sendFeedback(new LiteralText("The selected player has the following properties:").formatted(Formatting.YELLOW), false);
+        source.sendFeedback(new LiteralText("Connected IP Address: " + proxied.getRealAddress().toString().substring(1)), false);
+        source.sendFeedback(new LiteralText("Username: " + target.getGameProfile().getName()), false);
+        source.sendFeedback(new LiteralText("Online-Mode/Current UUID: " + target.getGameProfile().getId().toString()), false);
+        source.sendFeedback(new LiteralText("Calculated Offline-Mode UUID: " + ServerPlayerEntity.getUuidFromProfile(new GameProfile(null, target.getGameProfile().getName())).toString()), false);
+        return 1;
+    }
+
+    private int aboutThis(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+        ServerCommandSource source = ctx.getSource();
         source.sendFeedback(Texts.bracketed(new LiteralText("========Trampoline========").formatted(Formatting.GOLD)), false);
         source.sendFeedback(new LiteralText("Allows IP-Forwarding on Fabric servers connected to Bungeecord").formatted(Formatting.GRAY), false);
         source.sendFeedback(new LiteralText("By i509VCB").formatted(Formatting.GRAY), false);
@@ -65,22 +89,6 @@ public class TrampolineServerMod implements DedicatedServerModInitializer {
         Text t = new LiteralText("https://github.com/i509VCB/Trampoline").setStyle((new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/i509VCB/Trampoline")))).formatted(Formatting.YELLOW);
         
         source.sendFeedback(new LiteralText("Github Link: ").formatted(Formatting.GREEN).append(t), false);
-        return 1;
-    }
-
-    private int getInfo(ServerCommandSource source, GameProfile profile) throws CommandSyntaxException {
-        ServerPlayerEntity targetted = source.getMinecraftServer().getPlayerManager().getPlayer(profile.getId());
-        
-        if(targetted == null) {
-            throw EntityArgumentType.PLAYER_NOT_FOUND_EXCEPTION.create();
-        }
-        
-        BungeeAdaptedPlayer bu = adapt(targetted);
-        source.sendFeedback(new LiteralText("The selected player has the following properties:").formatted(Formatting.YELLOW), false);
-        source.sendFeedback(new LiteralText("Connected IP Address: " + bu.getRealAddress().toString().substring(1)), false);
-        source.sendFeedback(new LiteralText("Username: " + targetted.getGameProfile().getName()), false);
-        source.sendFeedback(new LiteralText("Online-Mode/Current UUID: " + profile.getId().toString()), false);
-        source.sendFeedback(new LiteralText("Calculated Offline-Mode UUID: " + ServerPlayerEntity.getUuidFromProfile(new GameProfile(null, profile.getName())).toString()), false);
         return 1;
     }
 }

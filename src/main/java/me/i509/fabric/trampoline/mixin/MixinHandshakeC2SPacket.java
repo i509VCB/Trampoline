@@ -42,13 +42,12 @@ public class MixinHandshakeC2SPacket implements HandshakeC2SPacketModifier {
     }
     
     /**
-     * @reason Why? I am lazy. Also to shut up Loom complaining about docs
+     * @reason Bungee sends a much larger handshake address than 255 characters, so we must read all of it.
      * @author i509VCB
      */
     @Overwrite
     public void read(PacketByteBuf packetByteBuf_1) throws IOException {
         this.version = packetByteBuf_1.readVarInt();
-        // Bungee sends a much larger handshake address than 255 characters. Also 32767 is the maximum packet size.
         this.address = packetByteBuf_1.readString(Short.MAX_VALUE);         
         this.port = packetByteBuf_1.readUnsignedShort();
         this.state = NetworkState.byId(packetByteBuf_1.readVarInt());

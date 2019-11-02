@@ -37,21 +37,21 @@ public class MixinServerLoginNetworkHandler {
     public void onHello(CallbackInfo ci) {
         UUID uuid;
         
-        BungeeConnectionModifier bClient = (BungeeConnectionModifier) client;
+        BungeeConnectionModifier bungeeConnection = (BungeeConnectionModifier) client;
         
-        if (bClient.getSpoofedUUID() != null) {
-            uuid = bClient.getSpoofedUUID();
+        if (bungeeConnection.getSpoofedUUID() != null) {
+            uuid = bungeeConnection.getSpoofedUUID();
         } else {
             uuid = ServerPlayerEntity.getOfflinePlayerUuid(profile.getName());
         }
         
         profile = new GameProfile(uuid, profile.getName());
 
-        if (bClient.getSpoofedProfile() != null) {
-            for (com.mojang.authlib.properties.Property property : bClient.getSpoofedProfile()) {
+        if (bungeeConnection.getSpoofedProfile() != null) {
+            for (com.mojang.authlib.properties.Property property : bungeeConnection.getSpoofedProfile()) {
                 profile.getProperties().put(property.getName(), property);
             }
         }
-        TrampolineServerMod.LOGGER.info(TrampolineServerMod.PREFIX + "UUID of player {} is {}", profile.getName(), profile.getId());
+        TrampolineServerMod.LOGGER.info(TrampolineServerMod.PREFIX + "Real UUID of player {} is {}", profile.getName(), profile.getId());
     }
 }
