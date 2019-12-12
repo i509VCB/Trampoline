@@ -28,7 +28,7 @@
 
   "depends": {
     "fabricloader": ">=0.4.0",
-    "fabric": "*"
+    "fabric": ">=0.4.23+build.276-1.15"
   },
   "suggests": {
     "flamingo": "*"
