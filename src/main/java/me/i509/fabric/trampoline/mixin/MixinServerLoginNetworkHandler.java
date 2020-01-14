@@ -1,22 +1,20 @@
 package me.i509.fabric.trampoline.mixin;
 
-import java.util.UUID;
-
-import org.spongepowered.asm.lib.Opcodes;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import com.mojang.authlib.GameProfile;
-
 import me.i509.fabric.trampoline.TrampolineServerMod;
 import me.i509.fabric.trampoline.accessors.BungeeConnectionModifier;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.objectweb.asm.Opcodes;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.UUID;
 
 @Mixin(ServerLoginNetworkHandler.class)
 public class MixinServerLoginNetworkHandler {
