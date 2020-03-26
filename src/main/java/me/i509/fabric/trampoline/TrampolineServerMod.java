@@ -17,11 +17,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
+import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,9 +88,9 @@ public class TrampolineServerMod implements DedicatedServerModInitializer {
         source.sendFeedback(Texts.bracketed(new LiteralText("================").append(new LiteralText("Trampoline").formatted(Formatting.GOLD).append(new LiteralText("================").formatted(Formatting.YELLOW))).formatted(Formatting.YELLOW)), false);
         source.sendFeedback(new LiteralText("Allows IP-Forwarding on Fabric servers connected to Bungeecord").formatted(Formatting.GRAY), false);
         source.sendFeedback(new LiteralText("By i509VCB").formatted(Formatting.GRAY), false);
-        
+
         Text t = new LiteralText("https://github.com/i509VCB/Trampoline").setStyle((new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/i509VCB/Trampoline")))).formatted(Formatting.YELLOW);
-        
+
         source.sendFeedback(new LiteralText("Github Link: ").formatted(Formatting.GREEN).append(t), false);
         return 1;
     }
